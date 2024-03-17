@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "25337127069",
+    "firebase_url": "https://solar-power-aerator-for-79b02-default-rtdb.firebaseio.com",
+    "project_id": "solar-power-aerator-for-79b02",
+    "storage_bucket": "solar-power-aerator-for-79b02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25337127069:android:df4d0b0c79625c4f447474",
+        "android_client_info": {
+          "package_name": "com.aerator_fish_farming.https"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGDClS7C4rYoVs77kDlcs5gPLPL-_7nNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
