@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:women_safety/helper/message_dao.dart';
 import 'package:women_safety/util/size.util.dart';
 import 'package:women_safety/util/theme/app_colors.dart';
@@ -46,6 +47,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     false
   ];
 
+  Future<void> openNewLink(String link) async {
+    if (!await launchUrl(Uri.parse(link))) {
+      throw Exception('Could not launch $link');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +99,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Center(child: Text("Developed by Mehedi Hasan Shuvo.", style: sfProStyle400Regular.copyWith(fontSize: 16))),
+                    InkWell(
+                        onTap: (){
+                          openNewLink('https://sites.google.com/view/mehedihasanshuvo');
+                        },
+                        child: Center(child: Text("Developed by Mehedi Hasan Shuvo.", style: sfProStyle400Regular.copyWith(fontSize: 16)))),
                     const SizedBox(height: 20),
                   ],
                 );

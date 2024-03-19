@@ -11,10 +11,10 @@ void main() async {
   await di.init();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "AIzaSyAGDClS7C4rYoVs77kDlcs5gPLPL-_7nNw",
-      appId: "1:25337127069:android:df4d0b0c79625c4f447474",
-      messagingSenderId: "25337127069",
-      projectId: "solar-power-aerator-for-79b02",
+      apiKey: "AIzaSyBK3ydAm1tylYxUwo8DwJQYTpJ4f5TXboc",
+      appId: "1:57443790135:android:315b81a2513d203fa67eb2",
+      messagingSenderId: "57443790135",
+      projectId: "ac-control-33921",
     ),
   );
 
