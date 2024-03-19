@@ -78,7 +78,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       alignment: Alignment.center,
                       decoration: const BoxDecoration(
                           color: colorPrimary, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15))),
-                      child: Text('Welcome, Load Control Systems', style: sfProStyle500Medium.copyWith(fontSize: 15, color: Colors.white)),
+                      child: Text('Welcome, AC Control Systems', style: sfProStyle500Medium.copyWith(fontSize: 15, color: Colors.white)),
                     ),
                     Expanded(
                       child: ListView.builder(

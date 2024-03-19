@@ -5,10 +5,12 @@
 #include "time.h"
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
+
 #define API_KEY "AIzaSyAGDClS7C4rYoVs77kDlcs5gPLPL-_7nNw"
-#define USER_EMAIL "duetinmehedishuvo@gmail.com"
+#define USER_EMAIL "mahadilmc@gmail.com"
 #define USER_PASSWORD "123456"
-#define DATABASE_URL "solar-power-aerator-for-79b02-default-rtdb.firebaseio.com"
+#define DATABASE_URL "ac-control-33921-default-rtdb.firebaseio.com"
+
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
@@ -24,7 +26,7 @@ unsigned long sendDataPrevMillis = 0;
 unsigned long timerDelay = 180000;
 
 //server status led
-#define BlynkLED D5
+#define BlynkLEDD5 D5
 //buttons and led pins
 #define btn1 D1
 #define led1 D7
@@ -40,144 +42,146 @@ int statusChange = 0;
 
 void firebaseSetup() {
 
-  configTime(0, 0, ntpServer);
-  config.api_key = API_KEY;
-  auth.user.email = USER_EMAIL;
-  auth.user.password = USER_PASSWORD;
-  config.database_url = DATABASE_URL;
-  Firebase.reconnectWiFi(true);
-  fbdo.setResponseSize(4096);
-  config.token_status_callback = tokenStatusCallback;
-  config.max_token_generation_retry = 10;
-  Firebase.begin(&config, &auth);
-  // Getting the user UID might take a few seconds
-  Serial.println("Getting User UID");
-  while ((auth.token.uid) == "") {
-    Serial.print('.');
-    delay(2000);
-  }
+    configTime(0, 0, ntpServer);
+    config.api_key = API_KEY;
+    auth.user.email = USER_EMAIL;
+    auth.user.password = USER_PASSWORD;
+    config.database_url = DATABASE_URL;
+    Firebase.reconnectWiFi(true);
+    fbdo.setResponseSize(4096);
+    config.token_status_callback = tokenStatusCallback;
+    config.max_token_generation_retry = 10;
+    Firebase.begin(&config, &auth);
+    // Getting the user UID might take a few seconds
+    Serial.println("Getting User UID");
+    while ((auth.token.uid) == "") {
+        Serial.print('.');
+        delay(2000);
+    }
 }
 
 bool signupOK = false;
 
 void firebaseGuestToken() {
-  config.api_key = API_KEY;
-  config.database_url = DATABASE_URL;
-  if (Firebase.signUp(&config, &auth, "", "")) {
-    Serial.println("ok");
-    signupOK = true;
-  }
-  else {
-    Serial.printf("%s\n", config.signer.signupError.message.c_str());
-  }
-  config.token_status_callback = tokenStatusCallback;
-  Firebase.begin(&config, &auth);
-  Firebase.reconnectWiFi(true);
+    config.api_key = API_KEY;
+    config.database_url = DATABASE_URL;
+    if (Firebase.signUp(&config, &auth, "", "")) {
+        Serial.println("ok");
+        signupOK = true;
+    }
+    else {
+        Serial.printf("%s\n", config.signer.signupError.message.c_str());
+    }
+    config.token_status_callback = tokenStatusCallback;
+    Firebase.begin(&config, &auth);
+    Firebase.reconnectWiFi(true);
 }
 
 
 void setup()
 {
 
-  Serial.begin(115200);
+    Serial.begin(115200);
 
-  pinMode(BlynkLED, OUTPUT);
-  pinMode(led1, OUTPUT);
-  pinMode(btn1, INPUT_PULLUP);
+    pinMode(BlynkLEDD5, OUTPUT);
+    pinMode(led1, OUTPUT);
+    pinMode(btn1, INPUT_PULLUP);
 
-  // Connect to WiFi
-  WiFi.begin(ssid, password);
-  Serial.println("Connecting to WiFi...");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting...");
-  }
-  Serial.println("Connected to WiFi");
+    // Connect to WiFi
+    WiFi.begin(ssid, password);
+    Serial.println("Connecting to WiFi...");
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.println("Connecting...");
+    }
+    Serial.println("Connected to WiFi");
 
-  connectStatus = 1;
-  statusChange = 0;
-  firebaseSetup();
+    connectStatus = 1;
+    statusChange = 0;
+    firebaseSetup();
 }
 
 void loop()
 {
 
-  // Check if WiFi connection is still active
-  if (WiFi.status() != WL_CONNECTED) {
-    connectStatus = 0;
-    Serial.println("WiFi connection lost.");
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-      whenOffline();
-      Serial.println("Reconnecting...");
-    }
+    // Check if WiFi connection is still active
+    if (WiFi.status() != WL_CONNECTED) {
+        digitalWrite(BlynkLEDD5, LOW);
+        connectStatus = 0;
+        Serial.println("WiFi connection lost.");
+        WiFi.begin(ssid, password);
+        while (WiFi.status() != WL_CONNECTED) {
+            whenOffline();
+            Serial.println("Reconnecting...");
+        }
 
-  } else {
-    connectStatus += 1;
-    if (connectStatus == 1) {
-      firebaseSetup();
+    } else {
+        digitalWrite(BlynkLEDD5, HIGH);
+        connectStatus += 1;
+        if (connectStatus == 1) {
+            firebaseSetup();
+        }
+        whenOnline(); //handles online functionalities
     }
-    whenOnline(); //handles online functionalities
-  }
 }
 
 void whenOnline()
 {
-  statusChange++;
+    statusChange++;
 
-  if (Firebase.isTokenExpired()) {
-    Firebase.refreshToken(&config);
-    Serial.println("Refresh token");
-  }
-
-  if (digitalRead(btn1) == LOW)
-  {
-    led1State = !led1State;
-    updateLEDs();
-    delay(50);
-    while (digitalRead(btn1) == LOW);
-
-    int ststtt = 0;
-    if (led1State == true) {
-      ststtt = 1;
+    if (Firebase.isTokenExpired()) {
+        Firebase.refreshToken(&config);
+        Serial.println("Refresh token");
     }
 
-    if (Firebase.RTDB.setInt(&fbdo, mainPath, ststtt)) {
+    if (digitalRead(btn1) == LOW)
+    {
+        led1State = !led1State;
+        updateLEDs();
+        delay(50);
+        while (digitalRead(btn1) == LOW);
+
+        int ststtt = 0;
+        if (led1State == true) {
+            ststtt = 1;
+        }
+
+        if (Firebase.RTDB.setInt(&fbdo, mainPath, ststtt)) {
 //      Serial.println("Successfully SAVE TO " + fbdo.dataPath() + " (" + fbdo.dataType() + ")");
-    } else {
-      Serial.println("FAILED : Update \n" + fbdo.errorReason());
-    }
-  }
-
-  if (Firebase.RTDB.getInt(&fbdo, mainPath)) {
-    int analogValue =  fbdo.intData();
-    if (analogValue == 1) {
-      led1State = true;
-    } else {
-      led1State = false;
+        } else {
+            Serial.println("FAILED : Update \n" + fbdo.errorReason());
+        }
     }
 
-    updateLEDs();
-    delay(50);
+    if (Firebase.RTDB.getInt(&fbdo, mainPath)) {
+        int analogValue =  fbdo.intData();
+        if (analogValue == 1) {
+            led1State = true;
+        } else {
+            led1State = false;
+        }
 
-  } else {
-    Serial.println("FAILED : Data Received \n" + fbdo.errorReason());
-  }
+        updateLEDs();
+        delay(50);
+
+    } else {
+        Serial.println("FAILED : Data Received \n" + fbdo.errorReason());
+    }
 
 }
 
 void whenOffline()
 {
-  if (digitalRead(btn1) == LOW)
-  {
-    led1State = !led1State;
-    updateLEDs();
-    delay(50);
-    while (digitalRead(btn1) == LOW);
-  }
+    if (digitalRead(btn1) == LOW)
+    {
+        led1State = !led1State;
+        updateLEDs();
+        delay(50);
+        while (digitalRead(btn1) == LOW);
+    }
 }
 
 void updateLEDs()
 {
-  digitalWrite(led1, led1State);
+    digitalWrite(led1, led1State);
 }

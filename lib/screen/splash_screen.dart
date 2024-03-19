@@ -30,12 +30,12 @@ class _SplashScreenState extends State<SplashScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Lottie.asset('assets/raw/Animation - 1710673755834.json'),
+          Lottie.asset('assets/raw/Animation - 1710870126213.json'),
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: Text(
-              'Welcome Load Control systems',
+              'Welcome AC Control systems',
               style: sfProStyle500Medium.copyWith(color: colorGreen, fontSize: 17),
               textAlign: TextAlign.center,
             ),
